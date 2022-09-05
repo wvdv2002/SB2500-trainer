@@ -4,3 +4,7 @@ Computer software to manage and control the [SB2500 inverter controller](https:/
 The software is written in Python and the GUI is made using Kivy.
 
 First install the necessary packages using setup.py and then run python3 trainerGUI.py
+
+
+![image](images/ControllerTrainer.png)
+The running program
