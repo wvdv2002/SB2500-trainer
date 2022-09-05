@@ -1,0 +1,400 @@
+#:kivy 1.10.0
+
+<MyButtons>:
+    text_size: self.size
+    font_size: '25sp'
+    markup: True
+
+
+<ControllerSimulate>:
+    cols: 3
+    Button:
+        text: 'Reset Safety'
+        on_press: root.doResetSafety()
+    Button:
+        text: 'Reset Overvoltage'
+        on_press: root.doResetOvervoltage()
+    Button:
+        text: 'Toggle CapRealvoltage'
+        on_press: root.doToggleCapVoltage()
+
+    Label:
+        text: 'Dutycycle'
+    Slider:
+        id: duty_slider
+        min: 0
+        max: 1
+        value: 0
+        step: 0.01
+        on_value: duty_text.text = '% 1.2f' % self.value
+    TextInput:
+        size_hint_y: 0.1
+        id: duty_text
+        text: '0'
+        multiline: False
+    Button:
+        text: 'Fixed dutycycle'
+        on_press: root.doFixDutyCycle()
+    Button:
+        text: 'reset Controller'
+        on_press: root.resetController()
+    Button:
+        text: 'Close BridgeRelay'
+        on_press: root.closeBridgeRelay()
+    Button:
+        text: 'Open BridgeRelay'
+        on_press: root.openBridgeRelay()
+
+
+<ControllerGetMeasurements>:
+    Button:
+        text: 'doSampling'
+    Button:
+        text: 'getSamples'
+
+<ControllerStatus>:
+    orientation: 'vertical'
+    statusText: status_label
+    auxText: aux_label
+    Label:
+        text: "Unknown"
+        id: status_label
+    Label:
+        text: "Unknown"
+        id: aux_label
+        size_hint_y: 0.2
+
+
+<ControllerOscilloscope>:
+    orientation: 'vertical'
+    id: controller_scope
+    GridLayout:
+        cols: 3
+        size_hint_y: 0.1
+        id: scope_buttons
+        orientation: 'horizontal'
+        Button:
+            id: start_sampling
+            text: "Start\nSampling"
+            on_press: root.doSampling()
+        Button:
+            id: stop_sampling
+            text: "Stop\nSampling"
+            on_press: root.doStopSampling()
+        Button:
+            id: get_samples
+            text: "get samples"
+            on_press: root.doGetSamples()
+        Button:
+            id: getGenerator
+            text: "getGenerator"
+            on_press: root.doGetGenerator()
+        Button:
+            id: show_plot
+            text: "show plot"
+            on_press: root.doPlotting()
+        Button:
+            id: stopOnEvent
+            text: "stop on Event:"
+            on_press: root.doSetStopSamplingEvent()
+
+        Label:
+            text: 'event:'
+
+        Slider:
+            id: event_slider
+            on_value: event_slider_label.text = F"{self.value} - {root.controlTaskStates[self.value] if -1<self.value < len(root.controlTaskStates) else ''}"
+            min: -1
+            max: 30
+            step: 1
+            value: 6
+        Label:
+            id: event_slider_label
+            text: F"6 - {root.controlTaskStates[6]}"
+
+        Label:
+            text: 'sampleDiv:'
+        Slider:
+            id: sample_divider
+            on_value: sample_divider_label.text = str(self.value)
+            min: 0
+            max: 20
+            step: 1
+            value: 1
+        Label:
+            id: sample_divider_label
+            text: "0"
+
+        Label:
+            id: data_count
+            text: 'points: 0'
+        Button:
+            id: resume_get_samples
+            text: "Resume\nget samples"
+            on_press: root.doResumeGetSamples()
+        Label:
+            id: empty
+            text: ""
+        Button:
+            id: get_is_new_samples
+            text: "Check for\nnew samples"
+            on_press: root.doGetIsNewEventAvailable()
+        Label:
+            id: is_new_samples
+            text: '?'
+
+        Button:
+            id: reset_data
+            text: "reset data"
+            on_press: root.doResetData()
+
+
+
+<ControllerSetPoints>:
+    orientation: 'horizontal'
+    rows: 2
+    voutSlider: vout_slider
+    freqSlider: freq_slider
+    voutText: vout_text
+    vbusMinText: vbus_min_text
+    vbusMinSlider: vbusMin_slider
+    vbusMaxText: vbus_max_text
+    vbusMaxSlider: vbusMax_slider
+
+
+    BoxLayout:
+        orientation: 'vertical'
+        BoxLayout:
+            size_hint_y: 0.1
+            orientation: 'horizontal'
+            Button:
+                text: 'update Settings'
+                on_press: root.doUpdateSettings()
+            Button:
+                text: 'load Settings'
+                on_press: root.doLoadSettings()
+            Label:
+                text: ''
+        BoxLayout:
+            orientation: 'horizontal'
+            BoxLayout:
+                size_hint_x: 0.2
+                orientation: 'vertical'
+                Label:
+                    text: 'voltage'
+                Label:
+                    text: 'freq'
+                Label:
+                    text: 'deadT'
+                Label:
+                    text: 'vbusMin'
+                Label:
+                    text: 'vbusMax'
+                Label:
+                    text: 'iMax'
+                Label:
+                    text: ''
+                Label:
+                    text: ''
+
+            BoxLayout:
+                orientation: 'vertical'
+                Slider:
+                    id: vout_slider
+                    min: 0.0
+                    max: 250.0
+                    value: 0
+                    step: 1
+                    on_value: vout_text.text = '% 1.0f' % self.value
+
+                Slider:
+                    id: freq_slider
+                    min: 40.0
+                    max: 60.0
+                    value: 50.0
+                    step: 0.1
+                    on_value: freq_text.text = '% 1.1f' % self.value
+
+                Slider:
+                    id: deadtime_slider
+                    min: 0
+                    max: 255
+                    value: 30
+                    step: 1
+                    on_value: deadtime_text.text = '% 1.0f' % self.value
+
+                Slider:
+                    id: vbusMin_slider
+                    min: 0
+                    max: 600
+                    value: 100
+                    step: 5
+                    on_value: vbus_min_text.text = str(self.value)
+
+                Slider:
+                    id: vbusMax_slider
+                    min: 0
+                    max: 600
+                    value: 400
+                    step: 5
+                    on_value: vbus_max_text.text = '% 1.2f' % self.value
+
+                Slider:
+                    id: iMax_slider
+                    min: 0.0
+                    max: 15
+                    value: 5
+                    step: 0.1
+                    on_value: i_max_text.text = '% 1.1f' % self.value
+
+                Slider:
+                    id: u_cap_d_slider
+                    min: 0.0
+                    max: 1.0
+                    value: 0.1
+                    step: 0.1
+                    on_value: uCapD.text = '% 1.2f' % self.value
+
+                Slider:
+                    id: u_cap_max_slider
+                    min: 5.0
+                    max: 400.0
+                    value: 80.0
+                    step: 5.0
+                    on_value: uCapMax.text = '% 1.0f' % self.value
+
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_x: 0.2
+                TextInput:
+                    id: vout_text
+                    text: '0.0'
+                    multiline: False
+
+                TextInput:
+                    id: freq_text
+                    text: '0.0'
+                    multiline: False
+
+                TextInput:
+                    id: deadtime_text
+                    text: '0.0'
+                    multiline: False
+
+                TextInput:
+                    id: vbus_min_text
+                    text: '0'
+                    multiline: False
+
+
+                TextInput:
+                    id: vbus_max_text
+                    text: '0'
+                    multiline: False
+
+
+                TextInput:
+                    id: i_max_text
+                    text: '0'
+                    multiline: False
+
+
+
+                TextInput:
+                    id: uCapD
+                    text: '0'
+                    multiline: False
+
+
+                TextInput:
+                    id: uCapMax
+                    text: '0.1'
+                    multiline: False
+
+
+<Controller>:
+
+    portButton: selectPort
+    connectButton: connect_button
+    tcpConnectButton: tcp_connect_button
+    controllerStatus: controller_status
+    BoxLayout:
+        orientation: 'vertical'
+        BoxLayout:
+            size_hint_y:0.1
+            id: actions
+            Label:
+                text: "IErr:"
+            Label:
+                text: ""
+                id: iErrBar
+            Label:
+                text: "Vpp:"
+            Label:
+                text: ""
+                id: vPPBar
+            Label:
+                text: "RPM:"
+            Label:
+                text: ""
+                id: rPMBar
+        BoxLayout:
+            orientation: 'horizontal'
+            TabbedPanel:
+                do_default_tab: False
+
+                id: tabScreen
+                TabbedPanelItem:
+                    text: 'set&mon'
+                    ControllerSetPoints:
+                        id: controller_set_points
+                TabbedPanelItem:
+                    text: 'scope'
+                    ControllerOscilloscope:
+                        id: controller_scope
+                TabbedPanelItem:
+                    text: 'overview'
+                    ControllerStatus:
+                        id: controller_status
+                TabbedPanelItem:
+                    text: 'Simulate'
+                    ControllerSimulate:
+                        id: controller_simulate
+
+            GridLayout:
+                size_hint_x:0.2
+                rows: 7
+                Button:
+                    id: stop_live_view
+                    text: "stop live view"
+                    on_press: root.stopLiveView()
+                Button:
+                    id: start_live_view
+                    text: "start live view"
+                    on_press: root.startLiveView()
+
+                Label:
+                    id: ports
+                    text: 'COM0'
+                Button:
+                    id: selectPort
+                    text: 'port'
+                Button:
+                    id: connect_button
+                    text: 'com\nconnect'
+                TextInput:
+                    id: tcpPort
+                    text: '20001'
+                    multiline: False
+                Button:
+                    id: tcp_connect_button
+                    text: 'tcp\nconnect'
+
+
+
+
+
+
+
+
+
